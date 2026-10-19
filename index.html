@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b63ce">
+<title>Safety Culture · Inspecciones HyS V5</title>
+<style>
+:root{
+  --bg:#f5f8fc;--card:#fff;--ink:#10233f;--muted:#6f7f95;--line:#dbe5f0;
+  --blue:#0b63ce;--blue2:#2c8cff;--sky:#eaf4ff;--green:#159b64;--amber:#d99000;--red:#d53e4f;--slate:#8795a8;
+  --shadow:0 12px 34px rgba(20,65,120,.10);--r:20px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh}
+.topbar{
+ position:sticky;top:0;z-index:20;display:flex;gap:14px;align-items:center;justify-content:space-between;
+ padding:14px 18px;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--line)
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,var(--blue),#54a6ff);box-shadow:0 10px 24px rgba(11,99,206,.28);display:grid;place-items:center;color:white;font-weight:900}
+.brand h1{font-size:16px;margin:0}.brand small{display:block;color:var(--muted);margin-top:2px}
+.status{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.shell{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 71px)}
+.sidebar{padding:18px;border-right:1px solid var(--line);background:#fbfdff}
+.navbtn{width:100%;display:flex;align-items:center;gap:10px;padding:12px 14px;border:0;border-radius:14px;background:transparent;color:#40536f;text-align:left;margin-bottom:7px}
+.navbtn.active,.navbtn:hover{background:var(--sky);color:var(--blue);font-weight:700}
+.main{padding:22px;max-width:1500px;width:100%;margin:auto}
+.grid{display:grid;gap:16px}
+.kpis{grid-template-columns:repeat(5,minmax(150px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px}
+.kpi .v{font-size:28px;font-weight:800;margin-top:8px}.kpi .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.kpi .s{font-size:12px;color:var(--muted);margin-top:4px}
+.headrow{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+h2,h3{margin:0}.sub{color:var(--muted);font-size:13px;margin-top:5px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:0;border-radius:13px;padding:11px 14px;font-weight:700}
+.btn.primary{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 9px 20px rgba(11,99,206,.22)}
+.btn.soft{background:var(--sky);color:var(--blue)}
+.btn.ghost{background:#fff;border:1px solid var(--line);color:#38506d}
+.btn.danger{background:#fff0f2;color:var(--red)}
+.filters{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin:0 0 6px 2px;text-transform:uppercase;letter-spacing:.04em}
+.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;color:var(--ink);outline:none}
+.field textarea{min-height:88px;resize:vertical}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#8cc4ff;box-shadow:0 0 0 3px rgba(44,140,255,.1)}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:16px}
+table{border-collapse:collapse;width:100%;min-width:900px;background:#fff}
+th,td{padding:12px 14px;border-bottom:1px solid var(--line);font-size:13px;text-align:left}
+th{background:#f8fbff;color:#63738a;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.badge{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;font-size:11px;font-weight:800}
+.ok{background:#e8f8f1;color:var(--green)}.bad{background:#fff0f2;color:var(--red)}.warn{background:#fff7e6;color:var(--amber)}.muted{background:#eef2f6;color:#68798e}
+.chartrow{grid-template-columns:2fr 1fr 1fr}
+.bars{display:flex;flex-direction:column;gap:11px;margin-top:12px}
+.barline{display:grid;grid-template-columns:140px 1fr 44px;gap:10px;align-items:center;font-size:12px}
+.track{height:10px;border-radius:999px;background:#edf2f7;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--blue),#69b3ff)}
+.donut{width:132px;height:132px;border-radius:50%;margin:16px auto 8px;display:grid;place-items:center;background:conic-gradient(var(--green) 0 70%,var(--red) 70% 86%,var(--amber) 86% 100%)}
+.donut:after{content:"";width:82px;height:82px;border-radius:50%;background:white}
+.centerlabel{margin-top:-82px;text-align:center;font-weight:800;font-size:22px}
+.modal{position:fixed;inset:0;background:rgba(8,25,48,.45);display:none;align-items:flex-end;justify-content:center;z-index:60;padding:18px}
+.modal.show{display:flex}
+.panel{background:white;border-radius:24px 24px 18px 18px;width:min(1050px,100%);max-height:94vh;overflow:auto;box-shadow:0 28px 80px rgba(0,0,0,.25)}
+.panelhead{position:sticky;top:0;background:white;padding:18px 20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;z-index:2}
+.panelbody{padding:20px}
+.formgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.full{grid-column:1/-1}.span2{grid-column:span 2}
+.checklist{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.checkitem{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff}
+.checktop{display:grid;grid-template-columns:1fr 360px;gap:10px;align-items:center}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.seg button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 6px;font-size:11px;font-weight:700}
+.seg button.sel.cumple{background:#e9f8f2;color:var(--green);border-color:#bce7d4}
+.seg button.sel.nocumple{background:#fff0f2;color:var(--red);border-color:#f2c5cb}
+.seg button.sel.na{background:#eef2f6;color:#65778b}
+.seg button.sel.pendiente{background:#fff6df;color:var(--amber);border-color:#f3ddb0}
+.cond{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+.cond.show{display:block}
+.photoPreview{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.photoPreview img{width:90px;height:70px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.empty{padding:34px;text-align:center;color:var(--muted)}
+.footerbar{position:sticky;bottom:0;background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:12px 20px;display:flex;justify-content:flex-end;gap:8px}
+.mobileTabs{display:none}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:repeat(2,1fr)}.chartrow{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr 1fr}.checktop{grid-template-columns:1fr}}
+@media(max-width:760px){
+ .shell{display:block}.sidebar{display:none}.main{padding:14px 12px 84px}.topbar{padding:10px 12px}.brand small{display:none}
+ .kpis{grid-template-columns:repeat(2,1fr);gap:10px}.card{padding:14px;border-radius:16px}.kpi .v{font-size:23px}
+ .filters{grid-template-columns:1fr 1fr}.formgrid{grid-template-columns:1fr}.span2{grid-column:auto}.full{grid-column:auto}
+ .seg{grid-template-columns:repeat(2,1fr)}.modal{padding:0;align-items:stretch}.panel{max-height:100vh;border-radius:0}
+ .mobileTabs{position:fixed;display:grid;grid-template-columns:repeat(4,1fr);bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);z-index:40;padding:6px}
+ .mobileTabs button{border:0;background:white;padding:8px 4px;font-size:10px;color:#607087}.mobileTabs button.active{color:var(--blue);font-weight:800}
+ .barline{grid-template-columns:95px 1fr 38px}
+}
+@media print{.topbar,.sidebar,.mobileTabs,.actions,.btn{display:none!important}.shell{display:block}.main{padding:0}.card{box-shadow:none}.modal{position:static;background:none;padding:0}.panel{box-shadow:none;max-height:none}.footerbar{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">P</div><div><h1>Safety Culture · Inspecciones HyS V5</h1><small>Offline-first · Control preventivo</small></div></div>
+    <div class="status"><span class="dot" id="netDot"></span><span id="netTxt">Online</span><span>·</span><span id="saveTxt">Datos locales</span></div>
+  </header>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <button class="navbtn active" data-view="dashboard">▦ Dashboard</button>
+      <button class="navbtn" data-view="inspections">✓ Inspecciones</button>
+      <button class="navbtn" data-view="findings">⚠ Hallazgos</button>
+      <button class="navbtn" data-view="actions">↻ Acciones</button>
+      <button class="navbtn" data-view="settings">⚙ Configuración</button>
+    </aside>
+
+    <main class="main">
+      <section id="view-dashboard">
+        <div class="headrow">
+          <div><h2>Dashboard ejecutivo</h2><div class="sub">Indicadores calculados desde el historial local.</div></div>
+          <div class="actions"><button class="btn soft" onclick="exportJSON()">Exportar respaldo</button><button class="btn primary" onclick="openInspection()">+ Nueva inspección</button></div>
+        </div>
+        <div class="grid kpis" id="kpis"></div>
+        <div class="grid chartrow" style="margin-top:16px">
+          <div class="card"><h3>Desvíos por sector</h3><div class="sub">Sectores con mayor cantidad de no conformidades.</div><div class="bars" id="sectorBars"></div></div>
+          <div class="card"><h3>Estado de hallazgos</h3><div class="donut"></div><div class="centerlabel" id="closureRate">0%</div><div class="sub" style="text-align:center">Tasa de cierre</div></div>
+          <div class="card"><h3>Criticidad</h3><div class="bars" id="criticalityBars"></div></div>
+        </div>
+        <div class="card" style="margin-top:16px"><div class="headrow"><div><h3>Últimas inspecciones</h3><div class="sub">Actividad reciente.</div></div></div><div id="recentTable"></div></div>
+      </section>
+
+      <section id="view-inspections" style="display:none">
+        <div class="headrow"><div><h2>Inspecciones</h2><div class="sub">Historial completo, búsqueda y gestión.</div></div><button class="btn primary" onclick="openInspection()">+ Nueva inspección</button></div>
+        <div class="card">
+          <div class="filters">
+            <div class="field"><label>Buscar</label><input id="fSearch" placeholder="Empresa, sector, inspector..." oninput="renderInspections()"></div>
+            <div class="field"><label>Empresa</label><select id="fCompany" onchange="renderInspections()"><option value="">Todas</option></select></div>
+            <div class="field"><label>Sector</label><select id="fSector" onchange="renderInspections()"><option value="">Todos</option></select></div>
+            <div class="field"><label>Inspector</label><select id="fInspector" onchange="renderInspections()"><option value="">Todos</option></select></div>
+            <div class="field"><label>Estado</label><select id="fStatus" onchange="renderInspections()"><option value="">Todos</option><option>En curso</option><option>Cerrada</option></select></div>
+            <div class="field"><label>Desde</label><input type="date" id="fFrom" onchange="renderInspections()"></div>
+          </div>
+          <div style="height:12px"></div>
+          <div id="inspectionTable"></div>
+        </div>
+      </section>
+
+      <section id="view-findings" style="display:none">
+        <div class="headrow"><div><h2>Hallazgos</h2><div class="sub">Desvíos detectados en las inspecciones.</div></div></div>
+        <div class="card"><div id="findingTable"></div></div>
+      </section>
+
+      <section id="view-actions" style="display:none">
+        <div class="headrow"><div><h2>Acciones</h2><div class="sub">Seguimiento de compromisos, vencimientos y cierre.</div></div></div>
+        <div class="card"><div id="actionTable"></div></div>
+      </section>
+
+      <section id="view-settings" style="display:none">
+        <div class="headrow"><div><h2>Configuración</h2><div class="sub">Catálogos y criterios editables.</div></div></div>
+        <div class="grid" style="grid-template-columns:1fr 1fr">
+          <div class="card">
+            <h3>Plantilla de checklist</h3>
+            <div class="sub">Un requisito por línea. No contiene normativa legal predefinida.</div>
+            <div class="field" style="margin-top:12px"><textarea id="settingsChecklist" style="min-height:260px"></textarea></div>
+            <button class="btn primary" onclick="saveSettings()">Guardar configuración</button>
+          </div>
+          <div class="card">
+            <h3>Respaldo y restauración</h3>
+            <div class="sub">Los datos se guardan en este dispositivo mediante almacenamiento local del navegador.</div>
+            <div class="actions" style="margin-top:16px">
+              <button class="btn primary" onclick="createDemoInspections()">Crear 10 inspecciones de ejemplo</button>
+              <button class="btn soft" onclick="exportJSON()">Descargar respaldo</button>
+              <label class="btn ghost" style="display:inline-block">Restaurar JSON<input type="file" accept=".json" onchange="importJSON(event)" hidden></label>
+              <button class="btn danger" onclick="resetAll()">Borrar datos</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div class="mobileTabs">
+  <button class="active" data-view="dashboard">Dashboard</button>
+  <button data-view="inspections">Inspecciones</button>
+  <button data-view="findings">Hallazgos</button>
+  <button data-view="actions">Acciones</button>
+</div>
+
+<div class="modal" id="inspectionModal">
+  <div class="panel">
+    <div class="panelhead">
+      <div><h3 id="modalTitle">Nueva inspección</h3><div class="sub">Guardado local automático al confirmar.</div></div>
+      <button class="btn ghost" onclick="closeModal()">✕</button>
+    </div>
+    <div class="panelbody">
+      <div class="formgrid">
+        <div class="field"><label>Empresa *</label><input id="iCompany"></div>
+        <div class="field"><label>Establecimiento</label><input id="iSite"></div>
+        <div class="field"><label>Sector *</label><input id="iSector"></div>
+        <div class="field"><label>Fecha *</label><input type="date" id="iDate"></div>
+        <div class="field"><label>Inspector *</label><input id="iInspector"></div>
+        <div class="field"><label>Responsable *</label><input id="iResponsible" placeholder="Responsable del área / inspección"></div>
+        <div class="field"><label>Rubro *</label>
+          <select id="iRubro" onchange="updateLegalContext()">
+            <option value="Industria / General">Industria / General</option>
+            <option value="Construcción">Construcción</option>
+            <option value="Actividad Agraria">Actividad Agraria</option>
+            <option value="Minería">Minería</option>
+          </select>
+        </div>
+        <div class="field"><label>Actividad específica</label>
+          <select id="iActivity" onchange="updateLegalContext()">
+            <option value="">Inspección general</option>
+            <option value="Excavación">Excavación / zanja / pozo</option>
+            <option value="Demolición/Submuración">Demolición / submuración</option>
+            <option value="Trabajo en altura">Trabajo en altura</option>
+            <option value="Electricidad">Trabajo eléctrico</option>
+            <option value="Izaje">Izaje / movimiento de cargas</option>
+            <option value="Espacio confinado">Espacio confinado</option>
+            <option value="Otra">Otra actividad</option>
+          </select>
+        </div>
+        <div class="field span2"><label>Marco normativo detectado</label><textarea id="iStandard" readonly style="min-height:74px;background:#f7faff"></textarea></div>
+        <div class="field"><label>Referencia adicional editable</label><input id="iCustomStandard" placeholder="Norma interna / requisito específico"></div>
+        <div class="field full"><div id="legalNotice" class="sub" style="padding:10px 12px;background:#f4f8fd;border:1px solid var(--line);border-radius:12px"></div></div>
+        <div class="field"><label>Estado</label><select id="iStatus"><option>En curso</option><option>Cerrada</option></select></div>
+        <div class="field full"><label>Observaciones generales</label><textarea id="iNotes"></textarea></div>
+        <div class="field"><label>Firma / nombre inspector</label><input id="iInspectorSign" placeholder="Nombre para firma"></div>
+        <div class="field"><label>Firma / nombre responsable</label><input id="iResponsibleSign" placeholder="Nombre para firma"></div>
+      </div>
+
+      <div class="headrow" style="margin-top:20px;margin-bottom:8px"><div><h3>Checklist</h3><div class="sub">Los campos de hallazgo aparecen sólo cuando seleccionás “No cumple”.</div></div></div>
+      <div class="checklist" id="checklist"></div>
+    </div>
+    <div class="footerbar">
+      <button class="btn ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn primary" onclick="saveInspection()">Guardar inspección</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEY='Safety Culture_hys_v1';
+const SETTINGS='Safety Culture_hys_settings_v1';
+let editingId=null;
+const defaultChecklist=[
+ 'Orden y limpieza del sector',
+ 'Condiciones generales de circulación y accesos',
+ 'Estado de resguardos y protecciones',
+ 'Condición visible de instalaciones eléctricas',
+ 'Uso y disponibilidad de elementos de protección definidos',
+ 'Señalización y demarcación aplicable',
+ 'Condiciones de almacenamiento',
+ 'Disponibilidad y accesibilidad de medios de emergencia'
+];
+function load(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch{return []}}
+function store(data){localStorage.setItem(KEY,JSON.stringify(data));document.getElementById('saveTxt').textContent='Guardado '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});}
+const legalMatrix={
+ 'Industria / General':{
+   base:'Ley 19.587 + Decreto 351/79 (texto actualizado y normas complementarias aplicables).',
+   note:'Aplicación general para establecimientos alcanzados por el Decreto 351/79. Verificar modificaciones y normas complementarias según riesgo.',
+   checklist:[
+    ['Orden, limpieza y condiciones generales del lugar de trabajo','Decreto 351/79 · criterio general aplicable'],
+    ['Circulación, accesos y condiciones seguras de tránsito','Decreto 351/79 · Anexo I'],
+    ['Máquinas, herramientas, resguardos y protecciones','Decreto 351/79 · Anexo I'],
+    ['Condiciones de instalaciones eléctricas','Decreto 351/79 · Anexo VI'],
+    ['Protección contra incendios y medios de respuesta','Decreto 351/79 · Anexo VII'],
+    ['Elementos de protección personal acordes al riesgo','Ley 19.587 + Decreto 351/79'],
+    ['Señalización y demarcación según riesgos presentes','Decreto 351/79'],
+    ['Condiciones de almacenamiento y manipulación de materiales','Decreto 351/79']
+   ]
+ },
+ 'Construcción':{
+   base:'Ley 19.587 + Decreto 911/96 — Reglamento de Higiene y Seguridad para la Industria de la Construcción.',
+   note:'El Decreto 911/96 reemplaza al Decreto 351/79 para la industria de la construcción, salvo remisiones expresas de la normativa aplicable.',
+   checklist:[
+    ['Legajo técnico y organización preventiva disponibles según alcance de obra','Decreto 911/96 + normativa SRT complementaria'],
+    ['Orden, limpieza, circulación y accesos seguros','Decreto 911/96'],
+    ['Protección contra caída de personas y objetos','Decreto 911/96 · arts. 50 a 59 según condición'],
+    ['Instalaciones eléctricas y trabajos eléctricos en condiciones seguras','Decreto 911/96 · capítulo Electricidad'],
+    ['Máquinas, equipos y herramientas con protecciones adecuadas','Decreto 911/96'],
+    ['Señalización de riesgos y zonas de trabajo','Decreto 911/96'],
+    ['EPP definido según riesgos de la tarea','Decreto 911/96'],
+    ['Condiciones de medios auxiliares y superficies de trabajo','Decreto 911/96']
+   ]
+ },
+ 'Actividad Agraria':{
+   base:'Ley 19.587 + Decreto 617/97 — Reglamento de Higiene y Seguridad para la Actividad Agraria.',
+   note:'Para actividad agraria el Decreto 351/79 no resulta aplicable, salvo las remisiones expresas del Anexo I del Decreto 617/97.',
+   checklist:[
+    ['Condiciones generales del establecimiento y lugares de trabajo','Decreto 617/97'],
+    ['Máquinas, tractores, equipos y herramientas en condiciones seguras','Decreto 617/97'],
+    ['Manipulación y almacenamiento seguro de productos e insumos','Decreto 617/97'],
+    ['Información y capacitación sobre riesgos de las tareas','Decreto 617/97'],
+    ['Uso, conservación y entrega de EPP adecuados','Decreto 617/97'],
+    ['Condiciones de circulación y transporte interno','Decreto 617/97'],
+    ['Medidas preventivas frente a riesgos específicos de la actividad','Decreto 617/97']
+   ]
+ },
+ 'Minería':{
+   base:'Ley 19.587 + Decreto 249/07 — Reglamento de Higiene y Seguridad para la Actividad Minera.',
+   note:'Para actividad minera el Decreto 351/79 no resulta aplicable salvo remisiones expresas del Anexo I del Decreto 249/07.',
+   checklist:[
+    ['Reglamentos internos y procedimientos seguros de trabajo disponibles','Decreto 249/07 · Anexo I'],
+    ['Identificación y control de riesgos de operaciones mineras','Decreto 249/07'],
+    ['Máquinas, equipos e instalaciones en condiciones seguras','Decreto 249/07'],
+    ['Condiciones de circulación, accesos y áreas operativas','Decreto 249/07'],
+    ['EPP adecuado a los riesgos de la operación','Decreto 249/07'],
+    ['Capacitación e información preventiva','Decreto 249/07'],
+    ['Condiciones de emergencia y respuesta según operación','Decreto 249/07']
+   ]
+ }
+};
+const activityMatrix={
+ 'Excavación':{
+   applies:r=>r==='Construcción',
+   refs:'Decreto 911/96 · Excavaciones y trabajos subterráneos, arts. 143 a 148. Res. SRT 503/2014 para movimiento de suelos y excavaciones manuales o mecánicas a cielo abierto >1,20 m no incluidas en Res. SRT 550/2011. Res. SRT 550/2011 para demolición, excavación para subsuelos y submuraciones en obras alcanzadas.',
+   checklist:[
+    ['Excavación señalizada y protegida frente al riesgo de caída','Decreto 911/96 · arts. 145 y 147'],
+    ['Condición de bordes y ubicación de materiales/equipos controlada','Decreto 911/96 · art. 148'],
+    ['Resistencia y estabilidad del terreno evaluadas según la tarea','Decreto 911/96 + norma complementaria aplicable'],
+    ['Accesos y egresos seguros definidos para la excavación','Res. SRT 503/2014 · Anexo, si corresponde'],
+    ['Medidas preventivas frente a derrumbe/desmoronamiento implementadas','Res. SRT 503/2014 o Res. SRT 550/2011 según alcance'],
+    ['Interferencias e instalaciones preexistentes identificadas antes de excavar','Res. SRT 503/2014 / Res. SRT 550/2011 según alcance'],
+    ['Programa/medidas de seguridad específicas documentadas cuando corresponda','Res. SRT 503/2014 / Res. SRT 550/2011']
+   ]
+ },
+ 'Demolición/Submuración':{
+   applies:r=>r==='Construcción',
+   refs:'Decreto 911/96 + Res. SRT 550/2011, aplicable a etapas de demolición, excavación para subsuelos y ejecución de submuraciones.',
+   checklist:[
+    ['Medidas preventivas específicas de demolición/submuración documentadas','Res. SRT 550/2011'],
+    ['Zona de trabajo delimitada y acceso controlado','Decreto 911/96 + Res. SRT 550/2011'],
+    ['Estabilidad de estructuras y apuntalamientos evaluada','Decreto 911/96 + Res. SRT 550/2011'],
+    ['Legajo técnico contiene la documentación exigible de la etapa','Res. SRT 550/2011 · art. 8'],
+    ['Intervención y seguimiento preventivo previstos según etapa de obra','Res. SRT 550/2011']
+   ]
+ },
+ 'Trabajo en altura':{
+   applies:r=>r==='Construcción',
+   refs:'Decreto 911/96 · Protección contra caída de personas y trabajo con riesgo de caída a distinto nivel (arts. 52 a 59). Res. SRT 61/2023 — Medidas de Seguridad en Altura, complementaria del Decreto 911/96.',
+   checklist:[
+    ['Riesgo de caída identificado y protecciones colectivas implementadas prioritariamente','Decreto 911/96 · arts. 52 a 59'],
+    ['Aberturas, bordes y desniveles protegidos adecuadamente','Decreto 911/96 · art. 52'],
+    ['Trabajo con riesgo de caída a distinto nivel evaluado','Decreto 911/96 · art. 54'],
+    ['Medidas de Seguridad en Altura implementadas y documentadas','Res. SRT 61/2023 · Anexo I'],
+    ['Equipo/sistema de trabajo en altura verificado antes de su utilización','Res. SRT 61/2023 · Anexo III según equipo'],
+    ['Sistema de protección personal contra caídas adecuado cuando corresponda','Res. SRT 61/2023'],
+    ['Documentación incorporada al Legajo Técnico de obra cuando corresponde','Res. SRT 61/2023 · art. 3']
+   ]
+ },
+ 'Electricidad':{
+   applies:r=>r==='Construcción',
+   refs:'Decreto 911/96 · capítulo Electricidad. La selección de artículos depende de tensión, tipo de instalación y modalidad de trabajo.',
+   checklist:[
+    ['Instalación o circuito correctamente identificado antes de intervenir','Decreto 911/96 · capítulo Electricidad'],
+    ['Personal capacitado para el riesgo eléctrico y la tarea asignada','Decreto 911/96 · art. 76'],
+    ['Método y condición de trabajo definidos según nivel de tensión','Decreto 911/96 · capítulo Electricidad'],
+    ['Herramientas y EPP eléctricos adecuados a la tarea','Decreto 911/96 · capítulo Electricidad'],
+    ['Señalización, bloqueo y control del área implementados según tarea','Decreto 911/96 · capítulo Electricidad']
+   ]
+ }
+};
+function getChecklist(rubro,activity){
+
+ const custom=(()=>{
+   try{
+     return JSON.parse(localStorage.getItem(SETTINGS)||'null');
+   }catch{
+     return null;
+   }
+ })();
+
+ const base=(legalMatrix[rubro] || legalMatrix['Industria / General'])
+   .checklist.slice();
+
+ const a=activityMatrix[activity];
+
+ let checklist = a && a.applies(rubro)
+     ? base.concat(a.checklist)
+     : base;
+
+ if(custom && custom.length){
+   checklist = checklist.concat(
+     custom.map(x => [x,'Criterio configurado por el usuario'])
+   );
+ }
+
+ return checklist;
+}
+function esc(v=''){return String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function uid(){return 'I-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7)}
+function today(){return new Date().toISOString().slice(0,10)}
+function fmtDate(v){if(!v)return'-';const d=new Date(v+'T12:00:00');return d.toLocaleDateString('es-AR')}
+function daysDiff(a,b){return Math.round((new Date(b)-new Date(a))/86400000)}
+function setNet(){const on=navigator.onLine;document.getElementById('netTxt').textContent=on?'Online':'Sin conexión';document.getElementById('netDot').style.background=on?'var(--green)':'var(--amber)'}
+window.addEventListener('online',setNet);window.addEventListener('offline',setNet);setNet();
+
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>showView(b.dataset.view)));
+function showView(v){
+ document.querySelectorAll('[id^="view-"]').forEach(x=>x.style.display='none');
+ document.getElementById('view-'+v).style.display='block';
+ document.querySelectorAll('[data-view]').forEach(x=>x.classList.toggle('active',x.dataset.view===v));
+ if(v==='dashboard')renderDashboard();if(v==='inspections')renderInspections();if(v==='findings')renderFindings();if(v==='actions')renderActions();
+}
+function buildChecklist(existing=[]){
+ const rubro=document.getElementById('iRubro')?.value||'Industria / General';
+ const activity=document.getElementById('iActivity')?.value||'';
+ const items=getChecklist(rubro,activity);
+ const box=document.getElementById('checklist');box.innerHTML='';
+ items.forEach((entry,idx)=>{
+   const label=Array.isArray(entry)?entry[0]:entry;
+   const norm=Array.isArray(entry)?entry[1]:'Criterio configurado';
+   const old=existing[idx]||{};
+   const div=document.createElement('div');div.className='checkitem';div.dataset.idx=idx;
+   div.innerHTML=`<div class="checktop"><div><strong>${esc(label)}</strong><div class="sub">${esc(norm)}</div></div>
+   <div class="seg">
+    <button data-v="Cumple" class="${old.result==='Cumple'?'sel cumple':''}">Cumple</button>
+    <button data-v="No cumple" class="${old.result==='No cumple'?'sel nocumple':''}">No cumple</button>
+    <button data-v="No aplica" class="${old.result==='No aplica'?'sel na':''}">No aplica</button>
+    <button data-v="Pendiente" class="${old.result==='Pendiente'?'sel pendiente':''}">Pendiente</button>
+   </div></div>
+   <div class="cond ${old.result==='No cumple'?'show':''}">
+    <div class="formgrid">
+      <div class="field full"><label>Hallazgo / evidencia</label><textarea class="c-finding">${esc(old.finding||'')}</textarea></div>
+      <div class="field"><label>Criticidad</label><select class="c-critical"><option ${old.criticality==='Baja'?'selected':''}>Baja</option><option ${old.criticality==='Media'?'selected':''}>Media</option><option ${old.criticality==='Alta'?'selected':''}>Alta</option><option ${old.criticality==='Crítica'?'selected':''}>Crítica</option></select></div>
+      <div class="field"><label>Responsable</label><input class="c-owner" value="${esc(old.owner||'')}"></div>
+      <div class="field"><label>Vencimiento</label><input type="date" class="c-due" value="${esc(old.due||'')}"></div>
+      <div class="field full"><label>Acción correctiva</label><textarea class="c-action">${esc(old.action||'')}</textarea></div>
+      <div class="field"><label>Estado acción</label><select class="c-astatus"><option ${old.actionStatus==='Abierta'?'selected':''}>Abierta</option><option ${old.actionStatus==='En seguimiento'?'selected':''}>En seguimiento</option><option ${old.actionStatus==='Cerrada'?'selected':''}>Cerrada</option></select></div>
+      <div class="field span2"><label>Foto / evidencia</label><input type="file" accept="image/*" capture="environment" class="c-photo"><div class="photoPreview">${old.photo?`<img src="${old.photo}">`:''}</div></div>
+    </div>
+   </div>`;
+   div.querySelectorAll('.seg button').forEach(btn=>btn.onclick=(e)=>{e.preventDefault();selectResult(div,btn.dataset.v)});
+   const file=div.querySelector('.c-photo');file.onchange=()=>handlePhoto(file,div);
+   box.appendChild(div);
+ });
+}
+function selectResult(div,val){
+ div.dataset.result=val;
+ div.querySelectorAll('.seg button').forEach(b=>{b.className='';if(b.dataset.v===val)b.className='sel '+({'Cumple':'cumple','No cumple':'nocumple','No aplica':'na','Pendiente':'pendiente'}[val])});
+ div.querySelector('.cond').classList.toggle('show',val==='No cumple');
+}
+function handlePhoto(input,div){
+ const f=input.files[0];if(!f)return;
+ const r=new FileReader();r.onload=()=>{const img=new Image();img.onload=()=>{const c=document.createElement('canvas');const max=1200;let w=img.width,h=img.height;if(w>max){h*=max/w;w=max}if(h>max){w*=max/h;h=max}c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const data=c.toDataURL('image/jpeg',.72);div.dataset.photo=data;div.querySelector('.photoPreview').innerHTML=`<img src="${data}">`;};img.src=r.result};r.readAsDataURL(f);
+}
+function updateLegalContext(rebuild=true){
+ const rubro=document.getElementById('iRubro')?.value||'Industria / General';
+ const activity=document.getElementById('iActivity')?.value||'';
+ const base=legalMatrix[rubro]||legalMatrix['Industria / General'];
+ let text=base.base;
+ let notice=base.note;
+ const a=activityMatrix[activity];
+ if(a){
+   if(a.applies(rubro)){text+=' '+a.refs;notice+=' La actividad seleccionada agrega controles específicos y su referencia normativa.'}
+   else{notice+=' Atención: la actividad seleccionada puede requerir una norma específica diferente según el rubro. La app no la agrega automáticamente para evitar una referencia incorrecta.'}
+ }
+ document.getElementById('iStandard').value=text;
+ document.getElementById('legalNotice').textContent=notice;
+ if(rebuild)buildChecklist([]);
+}
+function openInspection(id=null){
+ editingId=id;
+ let rec=null;if(id)rec=load().find(x=>x.id===id);
+ document.getElementById('modalTitle').textContent=id?'Editar inspección':'Nueva inspección';
+ ['Company','Site','Sector','Inspector','Responsible','Notes'].forEach(k=>document.getElementById('i'+k).value=rec?rec[k.toLowerCase()]||'':'');
+ document.getElementById('iInspectorSign').value=rec?.inspectorSign||rec?.inspector||'';
+ document.getElementById('iResponsibleSign').value=rec?.responsibleSign||rec?.responsible||'';
+ document.getElementById('iRubro').value=rec?.rubro||'Industria / General';
+ document.getElementById('iActivity').value=rec?.activity||'';
+ document.getElementById('iCustomStandard').value=rec?.customStandard||'';
+ document.getElementById('iDate').value=rec?.date||today();document.getElementById('iStatus').value=rec?.status||'En curso';
+ updateLegalContext(false);
+ buildChecklist(rec?.items||[]);
+ if(rec)document.querySelectorAll('.checkitem').forEach((d,i)=>{if(rec.items[i]?.result)selectResult(d,rec.items[i].result);if(rec.items[i]?.photo){d.dataset.photo=rec.items[i].photo}});
+ document.getElementById('inspectionModal').classList.add('show');
+}
+function closeModal(){document.getElementById('inspectionModal').classList.remove('show');editingId=null}
+function saveInspection(){
+ const company=iCompany.value.trim(),sector=iSector.value.trim(),inspector=iInspector.value.trim(),responsible=iResponsible.value.trim(),date=iDate.value;
+ if(!company||!sector||!inspector||!responsible||!date){alert('Completá empresa, sector, inspector, responsable y fecha.');return}
+ const items=[...document.querySelectorAll('.checkitem')].map(div=>({
+   label:div.querySelector('strong').textContent,norm:div.querySelector('.checktop .sub')?.textContent||'',result:div.dataset.result||'Pendiente',
+   finding:div.querySelector('.c-finding')?.value||'',criticality:div.querySelector('.c-critical')?.value||'Baja',
+   owner:div.querySelector('.c-owner')?.value||'',due:div.querySelector('.c-due')?.value||'',action:div.querySelector('.c-action')?.value||'',
+   actionStatus:div.querySelector('.c-astatus')?.value||'Abierta',photo:div.dataset.photo||''
+ }));
+ let data=load();const now=new Date().toISOString();
+ const obj={id:editingId||uid(),company,site:iSite.value.trim(),sector,date,inspector,responsible,inspectorSign:iInspectorSign.value.trim(),responsibleSign:iResponsibleSign.value.trim(),rubro:iRubro.value,activity:iActivity.value,standard:iStandard.value.trim(),customStandard:iCustomStandard.value.trim(),status:iStatus.value,notes:iNotes.value.trim(),items,updatedAt:now,createdAt:editingId?(data.find(x=>x.id===editingId)?.createdAt||now):now};
+ if(editingId)data=data.map(x=>x.id===editingId?obj:x);else data.unshift(obj);
+ store(data);closeModal();renderAll();showView('inspections');
+}
+function duplicateInspection(id){
+ const data=load(),src=data.find(x=>x.id===id);if(!src)return;
+ const cp=JSON.parse(JSON.stringify(src));cp.id=uid();cp.date=today();cp.status='En curso';cp.createdAt=cp.updatedAt=new Date().toISOString();data.unshift(cp);store(data);renderAll();
+}
+function deleteInspection(id){if(!confirm('¿Eliminar esta inspección del historial local?'))return;store(load().filter(x=>x.id!==id));renderAll()}
+function findings(data=load()){return data.flatMap(i=>i.items.filter(x=>x.result==='No cumple').map((x,n)=>({...x,inspectionId:i.id,company:i.company,sector:i.sector,inspectionDate:i.date,idx:n})))}
+function compliance(data=load()){let c=0,nc=0;data.forEach(i=>i.items.forEach(x=>{if(x.result==='Cumple')c++;if(x.result==='No cumple')nc++}));return c+nc?Math.round(c/(c+nc)*100):0}
+function renderDashboard(){
+ const data=load(),fs=findings(data),closed=fs.filter(x=>x.actionStatus==='Cerrada').length,overdue=fs.filter(x=>x.due&&x.actionStatus!=='Cerrada'&&x.due<today()).length;
+ const k=[
+  ['Cumplimiento',compliance(data)+'%','Excluye No aplica'],
+  ['Inspecciones',data.length,'Historial local'],
+  ['Hallazgos abiertos',fs.length-closed,'Pendientes de cierre'],
+  ['Acciones vencidas',overdue,'Requieren atención'],
+  ['Tasa de cierre',fs.length?Math.round(closed/fs.length*100)+'%':'0%','Hallazgos cerrados']
+ ];
+ kpis.innerHTML=k.map(x=>`<div class="card kpi"><div class="l">${x[0]}</div><div class="v">${x[1]}</div><div class="s">${x[2]}</div></div>`).join('');
+ closureRate.textContent=fs.length?Math.round(closed/fs.length*100)+'%':'0%';
+ const sectors={};fs.forEach(x=>sectors[x.sector]=(sectors[x.sector]||0)+1);renderBars(sectorBars,sectors);
+ const crit={Baja:0,Media:0,Alta:0,Crítica:0};fs.forEach(x=>crit[x.criticality]=(crit[x.criticality]||0)+1);renderBars(criticalityBars,crit);
+ recentTable.innerHTML=tableInspections(data.slice(0,5));
+ populateFilters(data);
+}
+function renderBars(el,obj){
+ const vals=Object.values(obj);const max=Math.max(1,...vals);const entries=Object.entries(obj).sort((a,b)=>b[1]-a[1]);
+ el.innerHTML=entries.length?entries.map(([k,v])=>`<div class="barline"><span>${esc(k)}</span><div class="track"><div class="fill" style="width:${v/max*100}%"></div></div><b>${v}</b></div>`).join(''):'<div class="empty">Sin datos todavía</div>';
+}
+function tableInspections(data){
+ if(!data.length)return'<div class="empty">Todavía no hay inspecciones cargadas.</div>';
+ return `<div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Empresa</th><th>Sector</th><th>Inspector</th><th>Responsable</th><th>Cumplimiento</th><th>Hallazgos</th><th>Estado</th><th></th></tr></thead><tbody>${data.map(i=>{
+   let c=0,nc=0;i.items.forEach(x=>{if(x.result==='Cumple')c++;if(x.result==='No cumple')nc++});const comp=c+nc?Math.round(c/(c+nc)*100):0;
+   return `<tr><td>${fmtDate(i.date)}</td><td><b>${esc(i.company)}</b><div class="sub">${esc(i.site||'')}</div></td><td>${esc(i.sector)}</td><td>${esc(i.inspector)}</td><td>${esc(i.responsible||'-')}</td><td>${comp}%</td><td><span class="badge ${nc?'bad':'ok'}">${nc}</span></td><td><span class="badge ${i.status==='Cerrada'?'ok':'warn'}">${i.status}</span></td><td><div class="actions"><button class="btn soft" onclick="openInspection('${i.id}')">Editar</button><button class="btn ghost" onclick="downloadInspectionPDF('${i.id}')">PDF</button><button class="btn ghost" onclick="shareWhatsApp('${i.id}')">WhatsApp</button><button class="btn ghost" onclick="shareEmail('${i.id}')">Email</button><button class="btn ghost" onclick="duplicateInspection('${i.id}')">Duplicar</button><button class="btn danger" onclick="deleteInspection('${i.id}')">Eliminar</button></div></td></tr>`
+ }).join('')}</tbody></table></div>`;
+}
+function populateFilters(data){
+ const fill=(id,vals)=>{const e=document.getElementById(id);if(!e)return;const cur=e.value;e.innerHTML=e.options[0].outerHTML+[...new Set(vals.filter(Boolean))].sort().map(v=>`<option>${esc(v)}</option>`).join('');e.value=cur};
+ fill('fCompany',data.map(x=>x.company));fill('fSector',data.map(x=>x.sector));fill('fInspector',data.map(x=>x.inspector));
+}
+function renderInspections(){
+ const data=load();populateFilters(data);
+ const q=(fSearch?.value||'').toLowerCase(),co=fCompany?.value||'',se=fSector?.value||'',ins=fInspector?.value||'',st=fStatus?.value||'',fr=fFrom?.value||'';
+ const out=data.filter(x=>(!q||[x.company,x.site,x.sector,x.inspector,x.responsible,x.activity].join(' ').toLowerCase().includes(q))&&(!co||x.company===co)&&(!se||x.sector===se)&&(!ins||x.inspector===ins)&&(!st||x.status===st)&&(!fr||x.date>=fr));
+ inspectionTable.innerHTML=tableInspections(out);
+}
+function renderFindings(){
+ const fs=findings();
+ if(!fs.length){findingTable.innerHTML='<div class="empty">Sin hallazgos registrados.</div>';return}
+ findingTable.innerHTML=`<div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Empresa</th><th>Sector</th><th>Hallazgo</th><th>Referencia</th><th>Criticidad</th><th>Responsable</th><th>Estado</th></tr></thead><tbody>${fs.map(x=>`<tr><td>${fmtDate(x.inspectionDate)}</td><td>${esc(x.company)}</td><td>${esc(x.sector)}</td><td><b>${esc(x.label)}</b><div class="sub">${esc(x.finding||'Sin detalle')}</div></td><td>${esc(x.norm||'-')}</td><td><span class="badge ${x.criticality==='Crítica'||x.criticality==='Alta'?'bad':x.criticality==='Media'?'warn':'muted'}">${esc(x.criticality)}</span></td><td>${esc(x.owner||'-')}</td><td>${esc(x.actionStatus||'Abierta')}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function renderActions(){
+ const fs=findings().filter(x=>x.action||x.owner||x.due);
+ if(!fs.length){actionTable.innerHTML='<div class="empty">No hay acciones registradas.</div>';return}
+ actionTable.innerHTML=`<div class="tablewrap"><table><thead><tr><th>Empresa</th><th>Acción</th><th>Responsable</th><th>Vencimiento</th><th>Estado</th><th>Situación</th></tr></thead><tbody>${fs.map(x=>{const ov=x.due&&x.actionStatus!=='Cerrada'&&x.due<today();return `<tr><td>${esc(x.company)}<div class="sub">${esc(x.sector)}</div></td><td>${esc(x.action||'-')}</td><td>${esc(x.owner||'-')}</td><td>${fmtDate(x.due)}</td><td>${esc(x.actionStatus)}</td><td><span class="badge ${ov?'bad':x.actionStatus==='Cerrada'?'ok':'warn'}">${ov?'Vencida':x.actionStatus==='Cerrada'?'Cerrada':'En plazo'}</span></td></tr>`}).join('')}</tbody></table></div>`;
+}
+
+function pdfSafeText(txt=''){
+ return String(txt).replace(/[^\x20-\x7E\xA0-\xFF]/g,' ').replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
+}
+function wrapText(text,max=88){
+ const words=String(text||'').split(/\s+/), lines=[];let line='';
+ words.forEach(w=>{const t=(line?line+' ':'')+w;if(t.length>max){if(line)lines.push(line);line=w}else line=t});
+ if(line)lines.push(line);return lines.length?lines:[''];
+}
+function buildInspectionReportLines(i){
+ let c=0,nc=0,na=0,p=0;
+ (i.items||[]).forEach(x=>{if(x.result==='Cumple')c++;else if(x.result==='No cumple')nc++;else if(x.result==='No aplica')na++;else p++});
+ const comp=(c+nc)?Math.round(c/(c+nc)*100):0;
+ const fs=(i.items||[]).filter(x=>x.result==='No cumple');
+ const crit={Baja:0,Media:0,Alta:0,Crítica:0};fs.forEach(x=>crit[x.criticality]=(crit[x.criticality]||0)+1);
+ const maxCrit=crit['Crítica']?'CRITICA':crit['Alta']?'ALTA':crit['Media']?'MEDIA':crit['Baja']?'BAJA':'SIN HALLAZGOS';
+ const L=[];
+ L.push('Safety Culture');
+ L.push('INFORME PROFESIONAL DE INSPECCION DE HIGIENE Y SEGURIDAD');
+ L.push('________________________________________________________________________________');
+ L.push('');
+ L.push('RESUMEN EJECUTIVO');
+ L.push('Empresa: '+(i.company||'-')+' | Establecimiento: '+(i.site||'-'));
+ L.push('Sector: '+(i.sector||'-')+' | Fecha: '+fmtDate(i.date));
+ L.push('Inspector: '+(i.inspector||'-')+' | Responsable: '+(i.responsible||'-'));
+ L.push('Rubro: '+(i.rubro||'-')+' | Actividad: '+(i.activity||'Inspeccion general'));
+ L.push('Estado de inspeccion: '+(i.status||'-'));
+ L.push('');
+ L.push('INDICADORES PRINCIPALES');
+ L.push('Cumplimiento: '+comp+'%');
+ L.push('Cumple: '+c+' | No cumple: '+nc+' | No aplica: '+na+' | Pendiente: '+p);
+ L.push('Nivel maximo de criticidad detectado: '+maxCrit);
+ L.push('Hallazgos: '+fs.length+' | Alta/Critica: '+((crit['Alta']||0)+(crit['Crítica']||0)));
+ L.push('');
+ L.push('MARCO NORMATIVO / CRITERIO DE EVALUACION');
+ wrapText(i.standard||'-',88).forEach(x=>L.push(x));
+ if(i.customStandard){L.push('Referencia adicional:');wrapText(i.customStandard,88).forEach(x=>L.push(x))}
+ L.push('');
+ if(i.notes){
+   L.push('OBSERVACIONES GENERALES');
+   wrapText(i.notes,88).forEach(x=>L.push(x));
+   L.push('');
+ }
+ L.push('DETALLE DE CHECKLIST, HALLAZGOS Y ACCIONES');
+ L.push('________________________________________________________________________________');
+ (i.items||[]).forEach((x,idx)=>{
+   L.push('');
+   wrapText((idx+1)+'. '+(x.label||''),88).forEach(t=>L.push(t));
+   L.push('Resultado: '+(x.result||'Pendiente')+(x.criticality && x.result==='No cumple'?' | Criticidad: '+x.criticality:''));
+   if(x.norm)wrapText('Referencia normativa: '+x.norm,88).forEach(t=>L.push(t));
+   if(x.result==='No cumple'){
+     if(x.finding)wrapText('Hallazgo / observacion: '+x.finding,88).forEach(t=>L.push(t));
+     if(x.action)wrapText('Accion correctiva: '+x.action,88).forEach(t=>L.push(t));
+     L.push('Responsable accion: '+(x.owner||'-')+' | Vencimiento: '+fmtDate(x.due)+' | Estado: '+(x.actionStatus||'-'));
+     if(x.photo)L.push('Evidencia fotografica: SI - registrada en la inspeccion digital.');
+   }
+ });
+ L.push('');
+ L.push('CIERRE Y CONFORMIDAD');
+ L.push('Inspector: '+(i.inspectorSign||i.inspector||'-'));
+ L.push('Firma: ________________________________    Fecha: __________________');
+ L.push('');
+ L.push('Responsable: '+(i.responsibleSign||i.responsible||'-'));
+ L.push('Firma: ________________________________    Fecha: __________________');
+ L.push('');
+ L.push('________________________________________________________________________________');
+ L.push('Safety Culture | Prevencion 4.0 · Analitica · Procesos · Gestion');
+ L.push('Documento generado localmente desde Safety Culture Inspecciones HyS.');
+ return L;
+}
+
+function getPrioritySummary(i){
+ const fs=(i.items||[]).filter(x=>x.result==='No cumple');
+ const overdue=fs.filter(x=>x.due&&x.actionStatus!=='Cerrada'&&x.due<today());
+ const critical=fs.filter(x=>x.criticality==='Crítica');
+ const high=fs.filter(x=>x.criticality==='Alta');
+ const open=fs.filter(x=>x.actionStatus!=='Cerrada');
+ const out=[];
+ if(critical.length) out.push('PRIORIDAD 1: '+critical.length+' hallazgo(s) critico(s). Requieren tratamiento inmediato y verificacion de control.');
+ if(overdue.length) out.push('PRIORIDAD 1: '+overdue.length+' accion(es) vencida(s) permanecen abiertas o en seguimiento.');
+ if(high.length) out.push('PRIORIDAD 2: '+high.length+' hallazgo(s) de criticidad alta requieren plan de cierre con responsable y fecha.');
+ if(open.length) out.push('SEGUIMIENTO: '+open.length+' hallazgo(s) aun no se encuentran cerrados.');
+ if(!out.length) out.push('No se identifican prioridades abiertas de alta criticidad en esta inspeccion.');
+ return out;
+}
+function dataUrlToJpegBytes(dataUrl){
+ if(!dataUrl || !dataUrl.startsWith('data:image/jpeg')) return null;
+ const b64=dataUrl.split(',')[1]; if(!b64) return null;
+ const bin=atob(b64), arr=new Uint8Array(bin.length);
+ for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+ return arr;
+}
+function jpegSize(bytes){
+ // Parse JPEG SOF markers
+ let i=2;
+ while(i<bytes.length){
+   if(bytes[i]!==0xFF){i++;continue}
+   const marker=bytes[i+1]; i+=2;
+   if(marker===0xD8||marker===0xD9) continue;
+   const len=(bytes[i]<<8)+bytes[i+1];
+   if([0xC0,0xC1,0xC2,0xC3,0xC5,0xC6,0xC7,0xC9,0xCA,0xCB,0xCD,0xCE,0xCF].includes(marker)){
+      const h=(bytes[i+3]<<8)+bytes[i+4], w=(bytes[i+5]<<8)+bytes[i+6];
+      return {w,h};
+   }
+   i+=len;
+ }
+ return {w:800,h:600};
+}
+function bytesToBinaryString(bytes){
+ let out=''; const chunk=0x8000;
+ for(let i=0;i<bytes.length;i+=chunk) out+=String.fromCharCode(...bytes.subarray(i,Math.min(i+chunk,bytes.length)));
+ return out;
+}
+function makeInspectionPDF(i){
+ const pageW=595.28,pageH=841.89,margin=42;
+ const objs=[];const add=o=>{objs.push(o);return objs.length};
+ const fontId=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+ const boldId=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>');
+ const imageObjects=[];
+ (i.items||[]).forEach((x,idx)=>{
+   if(x.photo){
+     const bytes=dataUrlToJpegBytes(x.photo);
+     if(bytes){
+       const sz=jpegSize(bytes);
+       const stream=bytesToBinaryString(bytes);
+       const id=add('<< /Type /XObject /Subtype /Image /Width '+sz.w+' /Height '+sz.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+bytes.length+' >>\nstream\n'+stream+'\nendstream');
+       imageObjects.push({itemIndex:idx,id,w:sz.w,h:sz.h,name:'Im'+imageObjects.length});
+     }
+   }
+ });
+ const pages=[], pageIds=[], contentIds=[];
+ function newPage(){
+   return {cmd:'',y:pageH-92,imgs:[]};
+ }
+ function header(pg,title='INSPECCION DE HIGIENE Y SEGURIDAD'){
+   pg.cmd+='0.043 0.388 0.808 rg 0 '+(pageH-70)+' '+pageW+' 70 re f ';
+   pg.cmd+='1 1 1 rg BT /F2 19 Tf '+margin+' '+(pageH-35)+' Td (Safety Culture) Tj ET ';
+   pg.cmd+='1 1 1 rg BT /F1 9 Tf '+margin+' '+(pageH-52)+' Td ('+pdfSafeText(title)+') Tj ET ';
+   pg.cmd+='0.85 0.90 0.95 RG '+margin+' 35 m '+(pageW-margin)+' 35 l S ';
+ }
+ function footer(pg,pageNum,total){
+   pg.cmd+='0.38 0.45 0.55 rg BT /F1 7.5 Tf '+margin+' 22 Td (Safety Culture | Prevencion 4.0 | Inspecciones HyS) Tj ET ';
+   pg.cmd+='0.38 0.45 0.55 rg BT /F1 7.5 Tf '+(pageW-110)+' 22 Td (Pagina '+pageNum+' de '+total+') Tj ET ';
+ }
+ function addText(pg,text,{size=9.3,bold=false,blue=false,indent=0,gap=13}={}){
+   const lines=wrapText(text,Math.max(42,88-Math.floor(indent/4)));
+   lines.forEach(line=>{
+     if(pg.y<58){pages.push(pg);pg=newPage();header(pg)}
+     const col=blue?'0.043 0.388 0.808':'0.063 0.137 0.247';
+     pg.cmd+=col+' rg BT /'+(bold?'F2':'F1')+' '+size+' Tf '+(margin+indent)+' '+pg.y+' Td ('+pdfSafeText(line)+') Tj ET ';
+     pg.y-=gap;
+   });
+   return pg;
+ }
+ function section(pg,title){
+   if(pg.y<85){pages.push(pg);pg=newPage();header(pg)}
+   pg.y-=5;
+   pg.cmd+='0.93 0.96 1 rg '+margin+' '+(pg.y-4)+' '+(pageW-margin*2)+' 22 re f ';
+   pg=addText(pg,title,{bold:true,blue:true,size:10.5,gap:18});
+   return pg;
+ }
+ // Cover
+ let pg=newPage(); header(pg,'INFORME PROFESIONAL DE INSPECCION HyS');
+ pg.y=pageH-145;
+ pg=addText(pg,'INFORME DE INSPECCION',{bold:true,blue:true,size:22,gap:28});
+ pg=addText(pg,i.company||'-',{bold:true,size:16,gap:24});
+ pg=addText(pg,(i.site||'')+(i.sector?' | '+i.sector:''),{size:11,gap:20});
+ pg.y-=18;
+ const coverPairs=[
+   ['Fecha',fmtDate(i.date)],['Inspector',i.inspector||'-'],['Responsable',i.responsible||'-'],
+   ['Rubro',i.rubro||'-'],['Actividad',i.activity||'Inspeccion general'],['Estado',i.status||'-']
+ ];
+ coverPairs.forEach(([a,b])=>{pg=addText(pg,a+': '+b,{size:10,gap:18})});
+ pg.y-=12;
+ pg=section(pg,'RESUMEN DE RESULTADOS');
+ let c=0,nc=0,na=0,pd=0;(i.items||[]).forEach(x=>{if(x.result==='Cumple')c++;else if(x.result==='No cumple')nc++;else if(x.result==='No aplica')na++;else pd++});
+ const comp=(c+nc)?Math.round(c/(c+nc)*100):0;
+ pg=addText(pg,'Cumplimiento: '+comp+'% | Cumple: '+c+' | No cumple: '+nc+' | No aplica: '+na+' | Pendiente: '+pd,{bold:true,size:11,gap:20});
+ getPrioritySummary(i).forEach(t=>pg=addText(pg,t,{size:10,gap:17}));
+ pages.push(pg);
+
+ // Detail pages
+ pg=newPage();header(pg);
+ pg=section(pg,'MARCO NORMATIVO / CRITERIO DE EVALUACION');
+ pg=addText(pg,i.standard||'-',{size:9.3});
+ if(i.customStandard)pg=addText(pg,'Referencia adicional: '+i.customStandard,{size:9.3});
+ if(i.notes){
+   pg=section(pg,'OBSERVACIONES GENERALES');
+   pg=addText(pg,i.notes,{size:9.3});
+ }
+ pg=section(pg,'CHECKLIST, HALLAZGOS Y ACCIONES');
+ (i.items||[]).forEach((x,idx)=>{
+   if(pg.y<120){pages.push(pg);pg=newPage();header(pg)}
+   pg=addText(pg,(idx+1)+'. '+(x.label||''),{bold:true,size:10,gap:16});
+   pg=addText(pg,'Resultado: '+(x.result||'Pendiente')+(x.result==='No cumple'?' | Criticidad: '+(x.criticality||'-'):''),{size:9.2});
+   if(x.norm)pg=addText(pg,'Referencia: '+x.norm,{size:8.8});
+   if(x.result==='No cumple'){
+     if(x.finding)pg=addText(pg,'Hallazgo / observacion: '+x.finding,{size:9.2});
+     if(x.action)pg=addText(pg,'Accion correctiva: '+x.action,{size:9.2});
+     pg=addText(pg,'Responsable accion: '+(x.owner||'-')+' | Vencimiento: '+fmtDate(x.due)+' | Estado: '+(x.actionStatus||'-'),{size:8.9});
+     const im=imageObjects.find(z=>z.itemIndex===idx);
+     if(im){
+       if(pg.y<220){pages.push(pg);pg=newPage();header(pg)}
+       const maxW=250,maxH=150,ratio=Math.min(maxW/im.w,maxH/im.h);
+       const w=im.w*ratio,h=im.h*ratio;
+       pg.cmd+='q '+w+' 0 0 '+h+' '+margin+' '+(pg.y-h)+' cm /'+im.name+' Do Q ';
+       pg.imgs.push(im);
+       pg.y-=h+16;
+       pg=addText(pg,'Evidencia fotografica asociada al hallazgo.',{size:8.2});
+     }
+   }
+   pg.y-=5;
+ });
+ pg=section(pg,'PRIORIDADES DE INTERVENCION');
+ getPrioritySummary(i).forEach(t=>pg=addText(pg,t,{size:9.4,gap:16}));
+ pg=section(pg,'CIERRE Y CONFORMIDAD');
+ pg=addText(pg,'Inspector: '+(i.inspectorSign||i.inspector||'-'),{size:9.5,gap:20});
+ pg=addText(pg,'Firma: ________________________________    Fecha: __________________',{size:9.2,gap:26});
+ pg=addText(pg,'Responsable: '+(i.responsibleSign||i.responsible||'-'),{size:9.5,gap:20});
+ pg=addText(pg,'Firma: ________________________________    Fecha: __________________',{size:9.2,gap:26});
+ pages.push(pg);
+
+ // Create page/content objects after total known
+ pages.forEach((pg,ix)=>footer(pg,ix+1,pages.length));
+ pages.forEach(pg=>{
+   const cid=add('<< /Length '+pg.cmd.length+' >>\nstream\n'+pg.cmd+'\nendstream');contentIds.push(cid);
+   const pid=add('PLACEHOLDER');pageIds.push(pid);
+ });
+ const pagesId=add('PLACEHOLDER');
+ pageIds.forEach((pid,ix)=>{
+   const xobjs=pages[ix].imgs.length
+     ? ' /XObject << '+[...new Map(pages[ix].imgs.map(im=>[im.name,im])).values()].map(im=>'/'+im.name+' '+im.id+' 0 R').join(' ')+' >>'
+     : '';
+   objs[pid-1]='<< /Type /Page /Parent '+pagesId+' 0 R /MediaBox [0 0 '+pageW+' '+pageH+'] /Resources << /Font << /F1 '+fontId+' 0 R /F2 '+boldId+' 0 R >>'+xobjs+' >> /Contents '+contentIds[ix]+' 0 R >>';
+ });
+ objs[pagesId-1]='<< /Type /Pages /Kids ['+pageIds.map(id=>id+' 0 R').join(' ')+'] /Count '+pageIds.length+' >>';
+ const catalogId=add('<< /Type /Catalog /Pages '+pagesId+' 0 R >>');
+ let chunks=['%PDF-1.4\n%\xE2\xE3\xCF\xD3\n']; let length=chunks[0].length,offsets=[0];
+ objs.forEach((o,idx)=>{offsets.push(length);const part=(idx+1)+' 0 obj\n'+o+'\nendobj\n';chunks.push(part);length+=part.length});
+ const xref=length;let tail='xref\n0 '+(objs.length+1)+'\n0000000000 65535 f \n';
+ for(let j=1;j<offsets.length;j++)tail+=String(offsets[j]).padStart(10,'0')+' 00000 n \n';
+ tail+='trailer\n<< /Size '+(objs.length+1)+' /Root '+catalogId+' 0 R >>\nstartxref\n'+xref+'\n%%EOF';
+ chunks.push(tail);
+ return new Blob(chunks.map(x=>typeof x==='string'?new Uint8Array([...x].map(ch=>ch.charCodeAt(0)&255)):x),{type:'application/pdf'});
+}
+function getInspectionById(id){return load().find(x=>x.id===id)}
+function inspectionPdfFileName(i){return 'Inspeccion_HyS_'+String(i.company||'Empresa').replace(/[^a-z0-9]+/gi,'_')+'_'+(i.date||today())+'.pdf'}
+function downloadInspectionPDF(id){
+ const i=getInspectionById(id);if(!i)return;
+ const blob=makeInspectionPDF(i);
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=inspectionPdfFileName(i);a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function shareWhatsApp(id){
+ const i=getInspectionById(id);if(!i)return;
+ const msg=`Inspección HyS - ${i.company} | ${fmtDate(i.date)} | Sector: ${i.sector} | Responsable: ${i.responsible||'-'}. Descargá el PDF desde la app y adjuntalo en WhatsApp.`;
+ window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+function shareEmail(id){
+ const i=getInspectionById(id);if(!i)return;
+ const subject=`Inspección HyS - ${i.company} - ${fmtDate(i.date)}`;
+ const body=`Adjunto informe de inspección HyS.\n\nEmpresa: ${i.company}\nSector: ${i.sector}\nFecha: ${fmtDate(i.date)}\nInspector: ${i.inspector}\nResponsable: ${i.responsible||'-'}\n\nDescargá previamente el PDF desde la app y adjuntalo a este correo.`;
+ location.href='mailto:?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+}
+
+function createDemoInspections(){
+ if(!confirm('Se crearán 10 inspecciones de ejemplo para probar dashboard, filtros, hallazgos, acciones y PDF. ¿Continuar?'))return;
+ const data=load();
+ const bases=[
+  ['Metalúrgica Centro','Planta Córdoba','Producción','Industria / General','Electricidad'],
+  ['Constructora Horizonte','Obra Torre Norte','Excavaciones','Construcción','Excavación'],
+  ['Constructora Horizonte','Obra Torre Norte','Estructura','Construcción','Trabajo en altura'],
+  ['Agro Sur','Establecimiento 4','Taller','Actividad Agraria',''],
+  ['Minera Andina','Yacimiento A','Mantenimiento','Minería',''],
+  ['Logística Centro','Depósito 2','Carga y descarga','Industria / General','Izaje'],
+  ['Alimentos del Valle','Planta 1','Envasado','Industria / General',''],
+  ['Constructora Delta','Subsuelo Edificio B','Submuración','Construcción','Demolición/Submuración'],
+  ['Servicios Técnicos SRL','Base Operativa','Tableros','Industria / General','Electricidad'],
+  ['Textil Córdoba','Planta Sur','Depósito','Industria / General','']
+ ];
+ const crits=['Baja','Media','Alta','Crítica'];
+ const now=new Date();
+ bases.forEach((b,idx)=>{
+   const d=new Date(now);d.setDate(now.getDate()-(idx*4+2));
+   const date=d.toISOString().slice(0,10);
+   const rubro=b[3],activity=b[4];
+   const pairs=getChecklist(rubro,activity);
+   const items=pairs.map((entry,j)=>{
+     const label=Array.isArray(entry)?entry[0]:entry;
+     const norm=Array.isArray(entry)?entry[1]:'Criterio configurado';
+     let result='Cumple';
+     if(j===idx%Math.max(1,pairs.length)) result='No cumple';
+     else if(j%7===0 && idx%3===0) result='Pendiente';
+     else if(j%8===0) result='No aplica';
+     const isNC=result==='No cumple';
+     const due=new Date(d);due.setDate(d.getDate()+(idx%2===0?7:-2));
+     return {
+       label,norm,result,
+       finding:isNC?'Se detecta condición a corregir durante la inspección de ejemplo.':'',
+       criticality:isNC?crits[idx%crits.length]:'Baja',
+       owner:isNC?['Mantenimiento','Jefe de Obra','Supervisor','Responsable de Sector'][idx%4]:'',
+       due:isNC?due.toISOString().slice(0,10):'',
+       action:isNC?'Implementar corrección, verificar efectividad y registrar cierre.':'',
+       actionStatus:isNC?(idx%3===0?'Cerrada':idx%3===1?'En seguimiento':'Abierta'):'Abierta',
+       photo:''
+     };
+   });
+   const base=legalMatrix[rubro]||legalMatrix['Industria / General'];
+   let standard=base.base;
+   const a=activityMatrix[activity];if(a&&a.applies(rubro))standard+=' '+a.refs;
+   data.unshift({
+     id:uid(),company:b[0],site:b[1],sector:b[2],date,
+     inspector:'Lic. Nicolás Ramirez',responsible:['Juan Pérez','María López','Carlos Díaz','Ana Torres'][idx%4],
+     inspectorSign:'Lic. Nicolás Ramirez',responsibleSign:['Juan Pérez','María López','Carlos Díaz','Ana Torres'][idx%4],
+     rubro,activity,standard,customStandard:'',status:idx%4===0?'En curso':'Cerrada',
+     notes:'Inspección de ejemplo generada para validar funcionamiento, indicadores y reportes.',
+     items,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()
+   });
+ });
+ store(data);renderAll();showView('dashboard');alert('Se crearon 10 inspecciones de ejemplo.');
+}
+function renderAll(){renderDashboard();renderInspections();renderFindings();renderActions();
+try{const c=JSON.parse(localStorage.getItem(SETTINGS)||'null');settingsChecklist.value=(c||defaultChecklist).join('\n')}catch{settingsChecklist.value=defaultChecklist.join('\n')}}
+function saveSettings(){const items=settingsChecklist.value.split('\n').map(x=>x.trim()).filter(Boolean);if(!items.length){alert('Ingresá al menos un punto de checklist.');return}localStorage.setItem(SETTINGS,JSON.stringify(items));alert('Configuración guardada. Se aplicará a nuevas inspecciones.')}
+function exportJSON(){const blob=new Blob([JSON.stringify({version:1,exportedAt:new Date().toISOString(),inspections:load(),checklist:(()=>{try{return JSON.parse(localStorage.getItem(SETTINGS)||'null')||defaultChecklist}catch{return defaultChecklist}})()},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Safety Culture_hys_respaldo_'+today()+'.json';a.click();URL.revokeObjectURL(a.href)}
+function importJSON(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const obj=JSON.parse(r.result);if(!Array.isArray(obj.inspections))throw 0;store(obj.inspections);if(Array.isArray(obj.checklist))localStorage.setItem(SETTINGS,JSON.stringify(obj.checklist));renderAll();alert('Respaldo restaurado.')}catch{alert('El archivo no tiene un formato válido.')}};r.readAsText(f)}
+function resetAll(){if(confirm('Esto eliminará todas las inspecciones guardadas en este dispositivo. ¿Continuar?')){localStorage.removeItem(KEY);renderAll()}}
+renderAll();
+</script>
+</body>
+</html>
